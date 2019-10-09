@@ -1,0 +1,1 @@
+Server=SOFTDEV\SQLEXPRESS; Database=TravelExperts;Integrated Security=true; Trusted_Connection=True;
