@@ -80,12 +80,18 @@ namespace Travelexpertwinform00
                     }
                     else
                     {
-                        MessageBox.Show("Password Wrong!");
+                        CustMesg msgfrm = new CustMesg();
+                        msgfrm.Showmsg("Password Wrong!");
+                        msgfrm.Show();
+                        //MessageBox.Show("Password Wrong!");
                     }
                 }
                 else
                 {
-                    MessageBox.Show("User is not exist!");
+                    CustMesg msgfrm = new CustMesg();
+                    msgfrm.Showmsg("User is not exist!");
+                    msgfrm.Show();
+                    //MessageBox.Show("User is not exist!");
                 }
             }
             
@@ -111,12 +117,30 @@ namespace Travelexpertwinform00
                 if (AgentLogInDB.CheckIDexist(agent.nAgentId))
                 {
                     AgentLogInDB.UpdateAgentLogin(agent, agent);
-                    MessageBox.Show("Password updated!");
+
+                    CustMesg msgfrm = new CustMesg();
+                    msgfrm.Showmsg("Password updated!");
+                    msgfrm.Show();
+                    //MessageBox.Show("Password updated!");
+                }
+                else if(AgentsDB.CheckAgentIDExist(agent.nAgentId))
+                {
+                    AgentLogInDB.AddAgentLogIn(agent);
+
+                    CustMesg msgfrm = new CustMesg();
+                    msgfrm.Showmsg("Account created!");
+                    msgfrm.Show();
+                    //MessageBox.Show("Account created!");
                 }
                 else
                 {
-                    AgentLogInDB.AddAgentLogIn(agent);
-                    MessageBox.Show("Account created!");
+                    txtUsrID.Text = "";
+                    txtPwd.Text = "";
+                    CustMesg msgfrm = new CustMesg();
+                    msgfrm.Showmsg("AgentId does not exist, Please refill the form!");
+                    msgfrm.Show();
+                    //MessageBox.Show("AgentId does not exist, Please refill the form!");
+
                 }
             }
             
@@ -125,6 +149,42 @@ namespace Travelexpertwinform00
         private void LoginFrm_Activated(object sender, EventArgs e)
         {
             //FrmValid.closeallotherform(this.Text);
+        }
+
+        private void BtnChangePwd_Click(object sender, EventArgs e)
+        {
+            if (validation())
+            {
+                AgentLogin agent = new AgentLogin();
+                agent.nAgentId = Convert.ToInt32(txtUsrID.Text);
+                agent.strPassword = GetHashString(txtPwd.Text);
+                if (AgentLogInDB.CheckIDexist(agent.nAgentId))
+                {
+                    AgentLogInDB.UpdateAgentLogin(agent, agent);
+                    CustMesg msgfrm = new CustMesg();
+                    msgfrm.Showmsg("Password updated!");
+                    msgfrm.Show();
+                    //MessageBox.Show("Password updated!");
+                }
+                else if (AgentsDB.CheckAgentIDExist(agent.nAgentId))
+                {
+                    AgentLogInDB.AddAgentLogIn(agent);
+                    CustMesg msgfrm = new CustMesg();
+                    msgfrm.Showmsg("Account created!");
+                    msgfrm.Show();
+                    //MessageBox.Show("Account created!");
+                }
+                else
+                {
+                    txtUsrID.Text = "";
+                    txtPwd.Text = "";
+                    CustMesg msgfrm = new CustMesg();
+                    msgfrm.Showmsg("AgentId does not exist, Please refill the form!");
+                    msgfrm.Show();
+                    //MessageBox.Show("AgentId does not exist, Please refill the form!");
+
+                }
+            }
         }
     }
 }

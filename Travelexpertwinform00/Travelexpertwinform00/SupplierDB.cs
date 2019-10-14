@@ -49,6 +49,39 @@ namespace Travelexpertwinform00
             }
         }
 
+        public static int GetMaxSuppliersID()
+        {
+            SqlConnection conn = Connection.GetConnection();
+            string strcmd = "select MAX( SupplierId) as MaxSupId from Suppliers";
+            SqlCommand selcmd = new SqlCommand(strcmd, conn);
+            
+            try
+            {
+                conn.Open();
+                SqlDataReader supreader = selcmd.ExecuteReader(CommandBehavior.SingleRow);
+                if (supreader.Read())
+                {
+                    Suppliers sup = new Suppliers();
+                    sup.nSupId = (int)supreader["MaxSupId"];
+                    
+                    return sup.nSupId;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw ex;
+
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
+
         public static Suppliers GetSuppliersbyName(string supname)
         {
             SqlConnection conn = Connection.GetConnection();
@@ -117,12 +150,22 @@ namespace Travelexpertwinform00
 
         public static int AddSupplier(Suppliers sup)
         {
+            int supId = GetMaxSuppliersID();
             SqlConnection conn = Connection.GetConnection();
             string strcmd = "insert Suppliers " +
-                "(SupName) " +
-                "values(@Supname)";
+                "(SupplierId,SupName) " +
+                "values(@SupId,@Supname)";
             SqlCommand insertcmd = new SqlCommand(strcmd, conn);
             insertcmd.Parameters.AddWithValue("@Supname", sup.strSupName);
+            if(supId > 0)
+            {
+                insertcmd.Parameters.AddWithValue("@SupId", supId+1);
+            }
+            else
+            {
+                insertcmd.Parameters.AddWithValue("@SupId", 1);
+            }
+            
 
             try
             {
@@ -199,7 +242,7 @@ namespace Travelexpertwinform00
 
         public static DataTable GetData()
         {
-            string strcmd = "select * from Suppliers";
+            string strcmd = "select * from Suppliers order by SupplierId asc ";
             try
             {
                 using (SqlConnection conn = Connection.GetConnection())

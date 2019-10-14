@@ -13,3 +13,4 @@ C:\Users\SoftDev\Documents\VS\winform\Travelexpertwinform00\Travelexpertwinform0
 C:\Users\SoftDev\Documents\VS\winform\Travelexpertwinform00\Travelexpertwinform00\obj\Debug\Travelexpertwinform00.ProdSupFrm.resources
 C:\Users\SoftDev\Documents\VS\winform\Travelexpertwinform00\Travelexpertwinform00\obj\Debug\Travelexpertwinform00.ProductFrm.resources
 C:\Users\SoftDev\Documents\VS\winform\Travelexpertwinform00\Travelexpertwinform00\obj\Debug\Travelexpertwinform00.SupplierFrm.resources
+C:\Users\SoftDev\Documents\VS\winform\Travelexpertwinform00\Travelexpertwinform00\obj\Debug\Travelexpertwinform00.CustMesg.resources

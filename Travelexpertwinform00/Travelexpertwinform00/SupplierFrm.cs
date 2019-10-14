@@ -104,6 +104,10 @@ namespace Travelexpertwinform00
 
         private void BindingNavigatorAddNewItem_Click(object sender, EventArgs e)
         {
+            BindingSource supbindsource = new BindingSource();
+            supbindsource.DataSource = SupplierDB.GetData();
+            bindingNavigatorSup.BindingSource = supbindsource;
+
             txtSupId.Text = "-1";
             txtSupName.Text = "";
         }
@@ -114,7 +118,14 @@ namespace Travelexpertwinform00
             {
                 if (txtSupId.Text == "-1" || txtSupId.Text == "")
                 {
-                    MessageBox.Show("Not a valid Supplier!");
+                    CustMesg msgfrm = new CustMesg();
+                    msgfrm.Showmsg("Not a valid Supplier!");
+                    msgfrm.Show();
+                    refreshitems();
+                    BindingSource supbindsource = new BindingSource();
+                    supbindsource.DataSource = SupplierDB.GetData();
+                    bindingNavigatorSup.BindingSource = supbindsource;
+                    //MessageBox.Show("Not a valid Supplier!");
                 }
                 else
                 {
@@ -122,9 +133,32 @@ namespace Travelexpertwinform00
                     Suppliers sup = new Suppliers();
                     sup.nSupId = supId;
                     sup.strSupName = txtSupName.Text;
-                    SupplierDB.DeleteSupplier(sup);
-                    refreshitems();
+                    if (!Prod_SuppliersDB.CheckSupInusebySupId(supId) && !SupplierContactsDB.CheckSupplierInuse(supId))
+                    {
+                        //if the supplier information is not in use in Prod_supplier table
+                        SupplierDB.DeleteSupplier(sup);
+                        refreshitems();
+                    }
+                    else
+                    {
+                        //if the supplier info is using in Prod_supplier table
+                        CustMesg custMesg = new CustMesg();
+                        custMesg.Showmsg("The Supplier is in use in Product_Supplier table,\n Please delete record in Product_Supplier table first!");
+                        custMesg.Show();
+
+                        refreshitems();
+                        BindingSource supbindsource = new BindingSource();
+                        supbindsource.DataSource = SupplierDB.GetData();
+                        bindingNavigatorSup.BindingSource = supbindsource;
+                    }
                 }
+            }
+            else
+            {
+                refreshitems();
+                BindingSource supbindsource = new BindingSource();
+                supbindsource.DataSource = SupplierDB.GetData();
+                bindingNavigatorSup.BindingSource = supbindsource;
             }
         }
 
@@ -143,10 +177,14 @@ namespace Travelexpertwinform00
                         //insert new
                         if(SupplierDB.CheckSuppliersExistbyName(txtSupName.Text))
                         {
-                            MessageBox.Show("Supplier exist already!");
+                            CustMesg msgfrm = new CustMesg();
+                            msgfrm.Showmsg("Supplier exist already!");
+                            msgfrm.Show();
+                            //MessageBox.Show("Supplier exist already!");
                         }
                         else
                         {
+
                             SupplierDB.AddSupplier(sup);
                         }
                         
@@ -158,6 +196,10 @@ namespace Travelexpertwinform00
                         SupplierDB.UpdateSupplier(sup, sup);
                     }
                     refreshitems();
+
+                    BindingSource supbindsource = new BindingSource();
+                    supbindsource.DataSource = SupplierDB.GetData();
+                    bindingNavigatorSup.BindingSource = supbindsource;
                 }
             }
         }

@@ -46,9 +46,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Agents.cs" />
     <Compile Include="AgentLogin.cs" />
     <Compile Include="AgentLogInDB.cs" />
+    <Compile Include="AgentsDB.cs" />
+    <Compile Include="Booking.cs" />
+    <Compile Include="BookingDB.cs" />
+    <Compile Include="BookingDetail.cs" />
+    <Compile Include="BookingDetailsDB.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="CustMesg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CustMesg.Designer.cs">
+      <DependentUpon>CustMesg.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmValid.cs" />
     <Compile Include="LoginFrm.cs">
       <SubType>Form</SubType>
@@ -90,6 +102,8 @@
     <Compile Include="Prod_SuppliersDB.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SupplierContacts.cs" />
+    <Compile Include="SupplierContactsDB.cs" />
     <Compile Include="SupplierDB.cs" />
     <Compile Include="SupplierFrm.cs">
       <SubType>Form</SubType>
@@ -111,6 +125,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TravelExpertsDataSet1.xsd</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="CustMesg.resx">
+      <DependentUpon>CustMesg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="LoginFrm.resx">
       <DependentUpon>LoginFrm.cs</DependentUpon>
     </EmbeddedResource>
@@ -177,8 +194,8 @@
   <ItemGroup>
     <Content Include="resources\beachFull.jpg" />
     <None Include="resources\beachFull1.jpg" />
+    <None Include="resources\reminder.png" />
     <Content Include="resources\Save.png" />
-    <None Include="resources\Save1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

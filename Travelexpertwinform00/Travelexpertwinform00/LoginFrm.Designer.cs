@@ -38,49 +38,55 @@
             this.btnChangePwd = new System.Windows.Forms.Button();
             this.lblPwdErr = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(401, 89);
+            this.label1.Location = new System.Drawing.Point(802, 122);
+            this.label1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 13);
+            this.label1.Size = new System.Drawing.Size(76, 26);
             this.label1.TabIndex = 0;
             this.label1.Text = "UserId";
             // 
             // txtUsrID
             // 
-            this.txtUsrID.Location = new System.Drawing.Point(458, 81);
+            this.txtUsrID.Location = new System.Drawing.Point(916, 107);
+            this.txtUsrID.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.txtUsrID.Name = "txtUsrID";
-            this.txtUsrID.Size = new System.Drawing.Size(100, 20);
+            this.txtUsrID.Size = new System.Drawing.Size(196, 32);
             this.txtUsrID.TabIndex = 1;
             this.txtUsrID.TextChanged += new System.EventHandler(this.TxtUsrID_TextChanged);
             // 
             // txtPwd
             // 
-            this.txtPwd.Location = new System.Drawing.Point(458, 127);
+            this.txtPwd.Location = new System.Drawing.Point(916, 195);
+            this.txtPwd.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.txtPwd.Name = "txtPwd";
             this.txtPwd.PasswordChar = '*';
-            this.txtPwd.Size = new System.Drawing.Size(100, 20);
+            this.txtPwd.Size = new System.Drawing.Size(196, 32);
             this.txtPwd.TabIndex = 3;
             this.txtPwd.TextChanged += new System.EventHandler(this.TxtPwd_TextChanged);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(401, 135);
+            this.label2.Location = new System.Drawing.Point(802, 211);
+            this.label2.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(53, 13);
+            this.label2.Size = new System.Drawing.Size(108, 26);
             this.label2.TabIndex = 2;
             this.label2.Text = "Password";
             // 
             // btnLogin
             // 
-            this.btnLogin.Location = new System.Drawing.Point(404, 203);
+            this.btnLogin.Location = new System.Drawing.Point(808, 341);
+            this.btnLogin.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.btnLogin.Name = "btnLogin";
-            this.btnLogin.Size = new System.Drawing.Size(75, 23);
+            this.btnLogin.Size = new System.Drawing.Size(150, 44);
             this.btnLogin.TabIndex = 4;
             this.btnLogin.Text = "Login";
             this.btnLogin.UseVisualStyleBackColor = true;
@@ -90,16 +96,18 @@
             // 
             this.lblUserIdErr.AutoSize = true;
             this.lblUserIdErr.ForeColor = System.Drawing.Color.Red;
-            this.lblUserIdErr.Location = new System.Drawing.Point(458, 108);
+            this.lblUserIdErr.Location = new System.Drawing.Point(916, 159);
+            this.lblUserIdErr.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.lblUserIdErr.Name = "lblUserIdErr";
-            this.lblUserIdErr.Size = new System.Drawing.Size(0, 13);
+            this.lblUserIdErr.Size = new System.Drawing.Size(0, 26);
             this.lblUserIdErr.TabIndex = 5;
             // 
             // btnAccNew
             // 
-            this.btnAccNew.Location = new System.Drawing.Point(509, 304);
+            this.btnAccNew.Location = new System.Drawing.Point(1018, 455);
+            this.btnAccNew.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.btnAccNew.Name = "btnAccNew";
-            this.btnAccNew.Size = new System.Drawing.Size(149, 23);
+            this.btnAccNew.Size = new System.Drawing.Size(298, 44);
             this.btnAccNew.TabIndex = 6;
             this.btnAccNew.Text = "Create Password Account";
             this.btnAccNew.UseVisualStyleBackColor = true;
@@ -107,37 +115,53 @@
             // 
             // btnChangePwd
             // 
-            this.btnChangePwd.Location = new System.Drawing.Point(509, 203);
+            this.btnChangePwd.Location = new System.Drawing.Point(1018, 341);
+            this.btnChangePwd.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.btnChangePwd.Name = "btnChangePwd";
-            this.btnChangePwd.Size = new System.Drawing.Size(149, 23);
+            this.btnChangePwd.Size = new System.Drawing.Size(298, 44);
             this.btnChangePwd.TabIndex = 7;
             this.btnChangePwd.Text = "Change Password";
             this.btnChangePwd.UseVisualStyleBackColor = true;
+            this.btnChangePwd.Click += new System.EventHandler(this.BtnChangePwd_Click);
             // 
             // lblPwdErr
             // 
             this.lblPwdErr.AutoSize = true;
             this.lblPwdErr.ForeColor = System.Drawing.Color.Red;
-            this.lblPwdErr.Location = new System.Drawing.Point(458, 154);
+            this.lblPwdErr.Location = new System.Drawing.Point(916, 247);
+            this.lblPwdErr.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.lblPwdErr.Name = "lblPwdErr";
-            this.lblPwdErr.Size = new System.Drawing.Size(0, 13);
+            this.lblPwdErr.Size = new System.Drawing.Size(0, 26);
             this.lblPwdErr.TabIndex = 8;
             // 
             // pictureBox1
             // 
             this.pictureBox1.Image = global::Travelexpertwinform00.Properties.Resources.beachFull;
-            this.pictureBox1.Location = new System.Drawing.Point(63, 71);
+            this.pictureBox1.Location = new System.Drawing.Point(126, 88);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(280, 219);
+            this.pictureBox1.Size = new System.Drawing.Size(560, 421);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 9;
             this.pictureBox1.TabStop = false;
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Harlow Solid Italic", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.ForeColor = System.Drawing.Color.Blue;
+            this.label3.Location = new System.Drawing.Point(291, 20);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(821, 51);
+            this.label3.TabIndex = 10;
+            this.label3.Text = "Travel Expert Agent Products Management Tool";
+            // 
             // LoginFrm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1365, 548);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.lblPwdErr);
             this.Controls.Add(this.btnChangePwd);
@@ -148,6 +172,8 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtUsrID);
             this.Controls.Add(this.label1);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.Name = "LoginFrm";
             this.Text = "LoginFrm";
             this.Activated += new System.EventHandler(this.LoginFrm_Activated);
@@ -169,5 +195,6 @@
         private System.Windows.Forms.Button btnChangePwd;
         private System.Windows.Forms.Label lblPwdErr;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label label3;
     }
 }

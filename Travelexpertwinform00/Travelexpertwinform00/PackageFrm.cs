@@ -32,6 +32,7 @@ namespace Travelexpertwinform00
             //refreshsups();
 
             refreshitems();
+            Validation();
         }
 
         private void refreshsups()
@@ -95,7 +96,7 @@ namespace Travelexpertwinform00
             if (pkgStartDateDateTimePicker.Value >= pkgEndDateDateTimePicker.Value)
             {
                 lblPkgEndDateErr.Text = "Package end date must be later than start date!";
-                pkgEndDateDateTimePicker.Value = pkgStartDateDateTimePicker.Value;
+                //pkgEndDateDateTimePicker.Value = pkgStartDateDateTimePicker.Value;
                 return false;
             }
             else
@@ -106,7 +107,7 @@ namespace Travelexpertwinform00
             if (pkgStartDateDateTimePicker.Value < DateTime.Now)
             {
                 lblPkgstDateErr.Text = "Package start date must be later than current date!";
-                pkgStartDateDateTimePicker.Value = DateTime.Now;
+               // pkgStartDateDateTimePicker.Value = DateTime.Now;
                 return false;
             }
             else
@@ -225,7 +226,7 @@ namespace Travelexpertwinform00
             
             //if pkg with prod_sup
             //update pkg_prod_sup delete record
-            if (dgvPkgProd.Rows.Count > 1)
+            if (dgvPkgProd.Rows.Count > 0)
             {
                 if (packageIdTextBox.Text == "" || packageIdTextBox.Text == "-1")
                 {
@@ -324,6 +325,10 @@ namespace Travelexpertwinform00
 
         private void BindingNavigatorAddNewItem_Click_1(object sender, EventArgs e)
         {
+            BindingSource pkgbindsource = new BindingSource();
+            pkgbindsource.DataSource = PackageDB.GetAllPkg();
+            PackagesBindingNavigator.BindingSource = pkgbindsource;
+
             packageIdTextBox.Text = "-1";
             pkgNameTextBox.Text = "";
             pkgStartDateDateTimePicker.Value = DateTime.Now;
@@ -356,11 +361,14 @@ namespace Travelexpertwinform00
                 int pkgId = Convert.ToInt32(packageIdTextBox.Text);
                 if(pkgId==-1)//new package
                 {
-                    if (dgvPkgProd.Rows.Count > 1)
+                    //create new package
+                    //if no prod_supplier info then insert only package info
+                    //if have prod_supplier info then insert package and package_product_supplier info
+                    if (dgvPkgProd.Rows.Count > 0)
                     {
-
+                        //have prod_supplier info then insert package and package_product_supplier info
                         List<Prod_Suppliers> prodlist = new List<Prod_Suppliers>();
-                        for (int j = 0; j < dgvPkgProd.Rows.Count - 1; j++)
+                        for (int j = 0; j < dgvPkgProd.Rows.Count; j++)
                         {
                             Prod_Suppliers prodsup = new Prod_Suppliers();
                             prodsup.strProdName = dgvPkgProd.Rows[j].Cells[0].Value.ToString();
@@ -395,22 +403,25 @@ namespace Travelexpertwinform00
                     }
                     else
                     {
-
-                        DataGridViewRow newrow = (DataGridViewRow)dgvPkgProd.Rows[0].Clone();
+                        //No prod_supplier info, only insert package information into package table
+                        DataGridViewRow newrow = new DataGridViewRow();
+                        //(DataGridViewRow)dgvPkgProd.Rows;
 
                         newrow.Cells[0].Value = cbProducts.Text;
                         newrow.Cells[1].Value = cbSups.Text;
                         dgvPkgProd.Rows.Add(newrow);
                     }
                 }
-                else if(dgvPkgProd.Rows.Count > 1)
+                else if(dgvPkgProd.Rows.Count > 0)
                 {
                     //if combobox content already in datagridview 
                     //do nothing
                     //if not in datagridview
                     //update pkg_prod_sup insert record
                     List<Prod_Suppliers> prodlist = new List<Prod_Suppliers>();
-                    for (int j = 0; j < dgvPkgProd.Rows.Count - 1; j++)
+                    bool bexist = false;
+                    //take current data in table into list
+                    for (int j = 0; j < dgvPkgProd.Rows.Count; j++)
                     {
                         Prod_Suppliers prodsup = new Prod_Suppliers();
                         prodsup.strProdName = dgvPkgProd.Rows[j].Cells[0].Value.ToString();
@@ -423,7 +434,13 @@ namespace Travelexpertwinform00
 
                         if ((cbProducts.Text == prodlist[j].strProdName) && (cbSups.Text == prodlist[j].strSupName))
                         {
+                            //if the product and supplier already in table then remove from the list
                             prodlist.RemoveAt(j);
+                            CustMesg custMesg = new CustMesg();
+                            custMesg.Showmsg("Product_Supplier Info already in table!");
+                            custMesg.Show();
+                            //lblAddDelMsg.Text = "Product_Supplier Info already in table!";
+                            bexist = true;
                             break;
                         }
                         else
@@ -432,8 +449,10 @@ namespace Travelexpertwinform00
                         }
 
                     }
-
-                    InsertProdSupTopps(pkgId);
+                    //check data in prod_supplier table? if exist then just show info in gridview, else insert into prod_supplier table
+                    //update data in package and pkg_prod_supplier
+                    if(!bexist)
+                        UpdateProdSupTopps(pkgId);
                 }
                 else
                 {
@@ -460,6 +479,37 @@ namespace Travelexpertwinform00
 
             refreshitems();
         }
+
+        private void UpdateProdSupTopps(int pkgId)
+        {
+            Prod_Suppliers prodsup = new Prod_Suppliers();
+            Products prod = ProductDB.GetProductsbyName(cbProducts.Text);
+            prodsup.nProdId = prod.nProdId;//cbProducts.SelectedValue);
+            Suppliers sup = SupplierDB.GetSuppliersbyName(cbSups.Text);
+            prodsup.nSupId = sup.nSupId;// Convert.ToInt32(cbSups.SelectedValue);
+            DataTable dt = Prod_SuppliersDB.GetProd_SupbyPsId(prodsup.nProdId, prodsup.nSupId);
+            int prodsupid = 0;
+            if (dt.Rows.Count>0)
+            {
+                prodsupid = Convert.ToInt32(dt.Rows[0]["ProductSupplierId"]);
+            }
+
+            if (prodsupid > 0)
+            {
+                Pkg_Product_Suppliers pps = new Pkg_Product_Suppliers();
+                pps.prodSupId = prodsupid;
+                pps.pkgId = pkgId;
+                Pkg_Product_SuppliersDB.AddPPSData(pps);
+
+                refreshitems();
+            }
+            else
+            {
+                CustMesg custMesg = new CustMesg();
+                custMesg.Showmsg("There is no supplier information in database! \n Please select other products!");
+                custMesg.Show();
+            }
+        }
         private void ToolStripBtnSave_Click(object sender, EventArgs e)
         {
             if (Validation())
@@ -477,9 +527,9 @@ namespace Travelexpertwinform00
                     pkgId = PackageDB.AddPackage(pkg);
                     if (pkgId != 0)
                     {
-                        if (dgvPkgProd.Rows.Count > 1)
+                        if (dgvPkgProd.Rows.Count > 0)
                         {
-                            for (int i = 0; i < dgvPkgProd.Rows.Count - 1; i++)
+                            for (int i = 0; i < dgvPkgProd.Rows.Count ; i++)
                             {
                                 Prod_Suppliers prodsup = new Prod_Suppliers();
                                 Products prod = ProductDB.GetProductsbyName(dgvPkgProd.Rows[i].Cells[0].Value.ToString());
@@ -509,9 +559,9 @@ namespace Travelexpertwinform00
                         PackageDB.UpdatePkg(oldpkg, pkg);
                         DataTable dtprodsup = Pkg_Product_SuppliersDB.GetAllPkgProdSupData(pkgId);
 
-                        if (dgvPkgProd.Rows.Count > 1)
+                        if (dgvPkgProd.Rows.Count > 0)
                         {
-                            for (int i = 0; i < dgvPkgProd.Rows.Count - 1; i++)
+                            for (int i = 0; i < dgvPkgProd.Rows.Count ; i++)
                             {
                                 string strprodname = dgvPkgProd.Rows[i].Cells[0].Value.ToString();
                                 string strsupName = dgvPkgProd.Rows[i].Cells[1].Value.ToString();
@@ -540,6 +590,9 @@ namespace Travelexpertwinform00
                         }
                     }
                 }
+                BindingSource pkgbindsource = new BindingSource();
+                pkgbindsource.DataSource = PackageDB.GetAllPkg();
+                PackagesBindingNavigator.BindingSource = pkgbindsource;
 
                 refreshitems(); 
             }
@@ -551,17 +604,85 @@ namespace Travelexpertwinform00
             {
                 int pkgId = Convert.ToInt32(packageIdTextBox.Text);
                 //pkgId = Convert.ToInt32(packageIdTextBox.Text);
-                Package oldpkg = new Package();
-                oldpkg.nPkgId = pkgId;
-                PackageDB.DeletePackage(oldpkg);
-                if (pkgId != 0)
+                if (Pkg_Product_SuppliersDB.CheckDatabyPkgID(pkgId))
                 {
-                    Pkg_Product_Suppliers pps = new Pkg_Product_Suppliers();
-                    pps.pkgId = pkgId;
-                    Pkg_Product_SuppliersDB.DeletePPSbyPkgId(pps);
+                    Package oldpkg = new Package();
+                    oldpkg.nPkgId = pkgId;
+                   
+                    if (pkgId != 0)
+                    {
+                        Pkg_Product_Suppliers pps = new Pkg_Product_Suppliers();
+                        pps.pkgId = pkgId;
+                        Pkg_Product_SuppliersDB.DeletePPSbyPkgId(pps);
+                        if(!BookingDB.CheckPackageIdInuse(pkgId))
+                            PackageDB.DeletePackage(oldpkg);
+                        else
+                        {
+                            CustMesg cust = new CustMesg();
+                            cust.Showmsg("Package is in use in Bookings table!");
+                            cust.Show();
+                        }
+                    }
+                    BindingSource pkgbindsource = new BindingSource();
+                    pkgbindsource.DataSource = PackageDB.GetAllPkg();
+                    PackagesBindingNavigator.BindingSource = pkgbindsource;
+                    refreshitems();
                     
                 }
+                else if (PackageDB.CheckPackIdExist(pkgId))
+                {
+                    Package oldpkg = new Package();
+                    oldpkg.nPkgId = pkgId;
+                    if (!BookingDB.CheckPackageIdInuse(pkgId))
+                        PackageDB.DeletePackage(oldpkg);
+                    else
+                    {
+                        CustMesg cust = new CustMesg();
+                        cust.Showmsg("Package is in use in Bookings table!");
+                        cust.Show();
+                    }
+                    BindingSource pkgbindsource = new BindingSource();
+                    pkgbindsource.DataSource = PackageDB.GetAllPkg();
+                    PackagesBindingNavigator.BindingSource = pkgbindsource;
+                    refreshitems();
+                    
+                }
+                else
+                {
+                    //Pkg_Product_Suppliers pps = new Pkg_Product_Suppliers();
+                    //pps.pkgId = pkgId;
+                    //Pkg_Product_SuppliersDB.DeletePPSbyPkgId(pps);
+
+                    //Package oldpkg = new Package();
+                    //oldpkg.nPkgId = pkgId;
+                    //PackageDB.DeletePackage(oldpkg);
+                    //if (pkgId != 0)
+                    //{
+                    //    Pkg_Product_Suppliers pkgps = new Pkg_Product_Suppliers();
+                    //    pps.pkgId = pkgId;
+                    //    Pkg_Product_SuppliersDB.DeletePPSbyPkgId(pkgps);
+
+                    //}
+                    BindingSource pkgbindsource = new BindingSource();
+                    pkgbindsource.DataSource = PackageDB.GetAllPkg();
+                    PackagesBindingNavigator.BindingSource = pkgbindsource;
+                    refreshitems();
+                    CustMesg cust = new CustMesg();
+                    cust.Showmsg("Not a valid record!");
+                    cust.Show();
+                    
+                   // MessageBox.Show("The Package is using in Package_Product_Supplier Table, Please delete record in Package_Product_Supplier Table First!");
+                }
+            }
+            else
+            {
+                BindingSource pkgbindsource = new BindingSource();
+                pkgbindsource.DataSource = PackageDB.GetAllPkg();
+                PackagesBindingNavigator.BindingSource = pkgbindsource;
                 refreshitems();
+                CustMesg cust = new CustMesg();
+                cust.Showmsg("Not a valid record!");
+                cust.Show();
             }
             
         }
@@ -573,7 +694,7 @@ namespace Travelexpertwinform00
 
         private void PkgStartDateDateTimePicker_ValueChanged(object sender, EventArgs e)
         {
-            Validation();
+            //Validation();
         }
 
         private void PkgEndDateDateTimePicker_ValueChanged(object sender, EventArgs e)
@@ -609,6 +730,11 @@ namespace Travelexpertwinform00
                 main.Activate();
                 this.Close();
             }
+        }
+
+        private void PkgStartDateDateTimePicker_Leave(object sender, EventArgs e)
+        {
+            Validation();
         }
     }
 }

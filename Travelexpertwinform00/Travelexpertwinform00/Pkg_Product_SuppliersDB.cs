@@ -46,6 +46,35 @@ namespace Travelexpertwinform00
             }
         }
 
+        public static bool CheckDatabyPkgID(int pkgId)
+        {
+            SqlConnection conn = Connection.GetConnection();
+            string strcmd = "select * from Packages_Products_Suppliers where PackageId=@pkgId";
+            SqlCommand selcmd = new SqlCommand(strcmd, conn);
+            selcmd.Parameters.AddWithValue("@pkgId", pkgId);
+
+            try
+            {
+                conn.Open();
+                SqlDataReader datareader = selcmd.ExecuteReader(CommandBehavior.SingleRow);
+                if (datareader.Read())
+                {
+                    
+                    return true;
+                }
+                else
+                    return false;
+            }
+            catch (SqlException ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
+
         public static Pkg_Product_Suppliers GetDatabyPSID(int prodsupId)
         {
             SqlConnection conn = Connection.GetConnection();
@@ -77,6 +106,34 @@ namespace Travelexpertwinform00
             }
         }
 
+        public static bool CheckDataInusebyPSID(int prodsupId)
+        {
+            SqlConnection conn = Connection.GetConnection();
+            string strcmd = "select * from Packages_Products_Suppliers where ProductSupplierId=@prodsupId";
+            SqlCommand selcmd = new SqlCommand(strcmd, conn);
+            selcmd.Parameters.AddWithValue("@prodsupId", prodsupId);
+
+            try
+            {
+                conn.Open();
+                SqlDataReader datareader = selcmd.ExecuteReader(CommandBehavior.SingleRow);
+                if (datareader.Read())
+                {
+                   
+                    return true;
+                }
+                else
+                    return false;
+            }
+            catch (SqlException ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
         public static int AddPPSData(Pkg_Product_Suppliers pps)
         {
             SqlConnection conn = Connection.GetConnection();

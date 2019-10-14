@@ -106,8 +106,13 @@ namespace Travelexpertwinform00
 
         private void BindingNavigatorAddNewItem_Click(object sender, EventArgs e)
         {
+            BindingSource prodbindsource = new BindingSource();
+            prodbindsource.DataSource = ProductDB.GetData();
+            bindingNavigatorProd.BindingSource = prodbindsource;
+
             txtProdId.Text = "-1";
             txtProdName.Text = "";
+
         }
 
         private void BindingNavigatorDeleteItem_Click(object sender, EventArgs e)
@@ -116,7 +121,13 @@ namespace Travelexpertwinform00
             {
                 if(txtProdId.Text=="-1" ||txtProdId.Text=="")
                 {
-                    MessageBox.Show("Not a valid Product!");
+                    CustMesg msgfrm = new CustMesg();
+                    msgfrm.Showmsg("Not a valid Product!");
+                    msgfrm.Show();
+                    refreshitems();
+                    BindingSource prodbindsource = new BindingSource();
+                    prodbindsource.DataSource = ProductDB.GetData();
+                    bindingNavigatorProd.BindingSource = prodbindsource;
                 }
                 else
                 {
@@ -124,10 +135,30 @@ namespace Travelexpertwinform00
                     Products prod = new Products();
                     prod.nProdId = prodId;
                     prod.strProdName = txtProdName.Text;
+                    if(!Prod_SuppliersDB.CheckProdInusebyProdId(prodId))
+                    { 
                     ProductDB.DeleteProduct(prod);
                     refreshitems();
+                    }
+                    else
+                    {
+                        CustMesg custMesg = new CustMesg();
+                        custMesg.Showmsg("The Product is in use in Product_Supplier table,\n Please delete record in Product_Supplier table first!");
+                        custMesg.Show();
+                        refreshitems();
+                        BindingSource prodbindsource = new BindingSource();
+                        prodbindsource.DataSource = ProductDB.GetData();
+                        bindingNavigatorProd.BindingSource = prodbindsource;
+                    }
                 }
                 
+            }
+            else
+            {
+                refreshitems();
+                BindingSource prodbindsource = new BindingSource();
+                prodbindsource.DataSource = ProductDB.GetData();
+                bindingNavigatorProd.BindingSource = prodbindsource;
             }
         }
 
@@ -146,7 +177,10 @@ namespace Travelexpertwinform00
                         //insert new
                         if(ProductDB.CheckProductsExistbyName(txtProdName.Text))
                         {
-                            MessageBox.Show("Products Exist already!");
+                            CustMesg msgfrm = new CustMesg();
+                            msgfrm.Showmsg("Products Exist already!");
+                            msgfrm.Show();
+                            //MessageBox.Show("Products Exist already!");
                         }
                         else
                         {
@@ -161,6 +195,10 @@ namespace Travelexpertwinform00
                         ProductDB.UpdateProduct(prod,prod);
                     }
                     refreshitems();
+
+                    BindingSource prodbindsource = new BindingSource();
+                    prodbindsource.DataSource = ProductDB.GetData();
+                    bindingNavigatorProd.BindingSource = prodbindsource;
                 }
                 
             }

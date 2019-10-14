@@ -85,6 +85,36 @@ namespace Travelexpertwinform00
             }
         }
 
+        public static bool CheckPackIdExist(int npkgId)
+        {
+            SqlConnection conn = Connection.GetConnection();
+            string strcmd = "select * from Packages where PackageId=@PkgId";
+            SqlCommand selcmd = new SqlCommand(strcmd, conn);
+            selcmd.Parameters.AddWithValue("@PkgId", npkgId);
+
+            try
+            {
+                conn.Open();
+                SqlDataReader pkgreader = selcmd.ExecuteReader(CommandBehavior.SingleRow);
+                if (pkgreader.Read())
+                {
+                    
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
         public static int AddPackage(Package pkg)
         {
             SqlConnection conn = Connection.GetConnection();
@@ -185,7 +215,7 @@ namespace Travelexpertwinform00
 
         public static DataTable GetAllPkg()
         {
-            string strquery = "select * from Packages";
+            string strquery = "select * from Packages order by PackageId asc";
             try
             {
                 using (SqlConnection conn = Connection.GetConnection())

@@ -189,12 +189,12 @@ namespace Travelexpertwinform00
 
         public static DataTable GetSupsData(string prodname)
         {
-            string strcmd = "select Suppliers.SupName "+
+            string strcmd = "select distinct Suppliers.SupName "+
                 "from Suppliers "+
                 "join Products_Suppliers on Products_Suppliers.SupplierId = Suppliers.SupplierId "+
                 "join Products on Products_Suppliers.ProductId = Products.ProductId "+
                 "where Products.ProdName = @ProdName "+
-                "order by ProductSupplierId asc";
+                "order by Suppliers.SupName asc";
             using (SqlConnection conn = Connection.GetConnection())
             {
                 SqlCommand cmd = new SqlCommand(strcmd, conn);
@@ -204,6 +204,74 @@ namespace Travelexpertwinform00
                 DataTable dtbl = new DataTable();
                 sda.Fill(dtbl);
                 return dtbl;
+            }
+        }
+
+        public static bool CheckSupInusebySupId(int supId)
+        {
+            SqlConnection conn = Connection.GetConnection();
+            string strcmd = "select * from Products_Suppliers "+
+                " where SupplierId=@SupId";
+            SqlCommand selcmd = new SqlCommand(strcmd, conn);
+            
+            selcmd.Parameters.AddWithValue("@SupId", supId);
+
+            try
+            {
+                conn.Open();
+               // int count = selcmd.ExecuteNonQuery();
+                SqlDataReader datareader = selcmd.ExecuteReader(CommandBehavior.SingleRow);
+                if (datareader.Read())
+                {
+                    // if (count > 0)
+                    return true;
+                }
+                else
+                    return false;
+
+            }
+            catch (SqlException ex)
+            {
+                throw ex;
+
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
+
+        public static bool CheckProdInusebyProdId(int prodId)
+        {
+            SqlConnection conn = Connection.GetConnection();
+            string strcmd = "select * from Products_Suppliers " +
+                " where ProductId=@ProdId";
+            SqlCommand selcmd = new SqlCommand(strcmd, conn);
+
+            selcmd.Parameters.AddWithValue("@ProdId", prodId);
+
+            try
+            {
+                conn.Open();
+                // int count = selcmd.ExecuteNonQuery();
+                SqlDataReader datareader = selcmd.ExecuteReader(CommandBehavior.SingleRow);
+                if (datareader.Read())
+                {
+                    // if (count > 0)
+                    return true;
+                }
+                else
+                    return false;
+
+            }
+            catch (SqlException ex)
+            {
+                throw ex;
+
+            }
+            finally
+            {
+                conn.Close();
             }
         }
 

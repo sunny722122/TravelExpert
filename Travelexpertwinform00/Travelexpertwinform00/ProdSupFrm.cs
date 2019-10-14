@@ -53,22 +53,25 @@ namespace Travelexpertwinform00
         }
 
         private void refreshitems()
-        {
-            DataTable dtps = Prod_SuppliersDB.GetAllDatabyName(); 
+        { 
+            DataTable dtps =  Prod_SuppliersDB.GetAllDatabyName();
 
+            //bindingNavigatorPS.PositionItem.Text = dtps.Rows.Count.ToString();
             int nindex = Convert.ToInt32(bindingNavigatorPS.PositionItem.Text) - 1;
-            txtProdSupID.Text = dtps.Rows[nindex]["ProductSupplierId"].ToString();
-            
-            cbProducts.DisplayMember = "ProdName";
-            cbProducts.ValueMember = "ProductId";
-            cbProducts.DataSource = ProductDB.GetData();
-            cbSuppliers.DisplayMember = "SupName";
-            cbSuppliers.ValueMember = "SupplierId";
-            cbSuppliers.DataSource = SupplierDB.GetData();
+            if ( nindex < dtps.Rows.Count)
+            {
+                txtProdSupID.Text = dtps.Rows[nindex]["ProductSupplierId"].ToString();
 
-            cbProducts.Text = dtps.Rows[nindex]["ProdName"].ToString();
-            cbSuppliers.Text = dtps.Rows[nindex]["SupName"].ToString();
+                cbProducts.DisplayMember = "ProdName";
+                cbProducts.ValueMember = "ProductId";
+                cbProducts.DataSource = ProductDB.GetData();
+                cbSuppliers.DisplayMember = "SupName";
+                cbSuppliers.ValueMember = "SupplierId";
+                cbSuppliers.DataSource = SupplierDB.GetData();
 
+                cbProducts.Text = dtps.Rows[nindex]["ProdName"].ToString();
+                cbSuppliers.Text = dtps.Rows[nindex]["SupName"].ToString();
+            }
             //if (dgvProdSup.DataSource==null)
             {
                 dgvProdSup.DataSource = Prod_SuppliersDB.GetAllDatabyName();
@@ -81,7 +84,7 @@ namespace Travelexpertwinform00
                     dgvProdSup.Rows[i].Selected = false;
                     dgvProdSup.Rows[i].DefaultCellStyle.BackColor = Color.White;
                 }
-                if(nindex< dgvProdSup.Rows.Count)
+                if( nindex< dgvProdSup.Rows.Count)
                 {
                     dgvProdSup.Rows[nindex].Selected = true;
                     dgvProdSup.Rows[nindex].DefaultCellStyle.BackColor = Color.LightYellow;
@@ -109,7 +112,12 @@ namespace Travelexpertwinform00
 
         private void BindingNavigatorAddNewItem_Click(object sender, EventArgs e)
         {
+            BindingSource psbindsource = new BindingSource();
+            psbindsource.DataSource = Prod_SuppliersDB.GetAllDatabyName();
+            bindingNavigatorPS.BindingSource = psbindsource;
+
             txtProdSupID.Text = "-1";
+            
             //cbProducts.Text = "";
             //cbSuppliers.Text = "";
         }
@@ -156,7 +164,10 @@ namespace Travelexpertwinform00
                     }
                     else
                     {
-                        MessageBox.Show("Record exist already!");
+                        CustMesg msgfrm = new CustMesg();
+                        msgfrm.Showmsg("Record exist already!");
+                        msgfrm.Show();
+                        //MessageBox.Show("Record exist already!");
                     }
                 }
                 else
@@ -166,6 +177,9 @@ namespace Travelexpertwinform00
                     Prod_SuppliersDB.UpdateRecord(ps, ps);
                 }
                 refreshitems();
+                BindingSource psbindsource = new BindingSource();
+                psbindsource.DataSource = Prod_SuppliersDB.GetAllDatabyName();
+                bindingNavigatorPS.BindingSource = psbindsource;
             }
         }
 
@@ -182,10 +196,67 @@ namespace Travelexpertwinform00
                     ps.nSupId = nsupId;
                     int prodsupID = Convert.ToInt32(txtProdSupID.Text);
                     ps.nProdSupId = prodsupID;
-                    Prod_SuppliersDB.DeleteRec(ps);
+                    if (!Pkg_Product_SuppliersDB.CheckDataInusebyPSID(prodsupID) && !BookingDetailsDB.CheckProdSupInuse(prodsupID))
+                    {
+                        Prod_SuppliersDB.DeleteRec(ps);
+                        refreshitems();
+                    }
+                    else
+                    {
+                        CustMesg custMesg = new CustMesg();
+                        custMesg.Showmsg("The Product_Supplier record is in use in Pkg_Product_Supplier table,\n Please delete record in Pkg_Product_Supplier table first!");
+                        custMesg.Show();
+                        refreshitems();
+                        BindingSource psbindsource = new BindingSource();
+                        psbindsource.DataSource = Prod_SuppliersDB.GetAllDatabyName();
+                        bindingNavigatorPS.BindingSource = psbindsource;
+                    }
+                }
+                else
+                {
+                    CustMesg msgfrm = new CustMesg();
+                    msgfrm.Showmsg("Not a valid record!");
+                    msgfrm.Show();
                     refreshitems();
+                    BindingSource psbindsource = new BindingSource();
+                    psbindsource.DataSource = Prod_SuppliersDB.GetAllDatabyName();
+                    bindingNavigatorPS.BindingSource = psbindsource;
+                    //MessageBox.Show("Not a valid record!");
                 }
             }
+            else
+            {
+                refreshitems();
+                BindingSource psbindsource = new BindingSource();
+                psbindsource.DataSource = Prod_SuppliersDB.GetAllDatabyName();
+                bindingNavigatorPS.BindingSource = psbindsource;
+            }
+        }
+
+        private void BindingNavigatorPS_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            ////Save
+            //if (Validation())
+            //{
+            //    int nprodId = ProductDB.GetProductsbyName(cbProducts.Text).nProdId;
+            //    int nsupId = SupplierDB.GetSuppliersbyName(cbSuppliers.Text).nSupId;
+            //    Prod_Suppliers ps = new Prod_Suppliers();
+            //    ps.nProdId = nprodId;
+            //    ps.nSupId = nsupId;
+            //    if (txtProdSupID.Text == "-1")
+            //    {
+            //        if (Prod_SuppliersDB.GetProd_SupbyPsId(nprodId, nsupId).Rows.Count <= 0)
+            //        {
+            //            Prod_SuppliersDB.AddRecord(ps);
+            //        }
+            //        else
+            //        {
+            //            MessageBox.Show("Record exist already!");
+            //        }
+            //    }
+                
+            //    refreshitems();
+            //}
         }
     }
 }
